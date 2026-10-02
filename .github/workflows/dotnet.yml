@@ -1,0 +1,41 @@
+name: .NET tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+      - run: dotnet test lab2.slnx --configuration Release
+      - name: Run game
+        run: dotnet run --project lab2.csproj --no-build --configuration Release
+      - name: Check result files
+        run: |
+          for i in 1 2 3; do
+            file="${i}.PursuitLog.txt"
+            if [ -s "$file" ]; then
+              echo "$file was created"
+            else
+              echo "$file is missing or empty"
+              exit 1
+            fi
+          done
+      - name: Upload pursuit logs
+        uses: actions/upload-artifact@v7
+        with:
+          name: pursuit-logs
+          path: |
+            1.PursuitLog.txt
+            2.PursuitLog.txt
+            3.PursuitLog.txt
+          if-no-files-found: error
