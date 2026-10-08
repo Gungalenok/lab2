@@ -16,11 +16,11 @@ public abstract class Player(int fieldSize)
         }
 
         if (State != State.Playing) return;
-        Location = Normalize((long)Location + steps);
+        Location = Normalize(Location + steps);
 		DistanceTraveled += Math.Abs(steps);
     }
 
-	private int Normalize(long position) => (int)(((position - 1) % fieldSize + fieldSize) % fieldSize + 1);
+	private int Normalize(int position) => ((position - 1) % fieldSize + fieldSize) % fieldSize + 1;
 
     public int DistanceTo(Player player)
     {
